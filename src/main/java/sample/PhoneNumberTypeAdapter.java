@@ -43,8 +43,7 @@ public class PhoneNumberTypeAdapter implements JsonSerializer<PhoneNumber>, Json
         }
         try {
             return Validate.notNull(parser.parse(text));
-        }
-        catch (PhoneNumber.ParseException ex) {
+        } catch (PhoneNumber.ParseException ex) {
             throw new JsonParseException(ex);
         }
     }

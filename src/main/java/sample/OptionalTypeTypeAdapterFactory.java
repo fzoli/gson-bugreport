@@ -87,19 +87,18 @@ public final class OptionalTypeTypeAdapterFactory implements TypeAdapterFactory 
     }
 
     private static void normalizeAbsents(final Object o, final Iterable<OptionalTypeFieldWrapper> optionalTypeFields) {
-        for ( final OptionalTypeFieldWrapper wrapper : optionalTypeFields ) {
+        for (final OptionalTypeFieldWrapper wrapper : optionalTypeFields) {
             try {
                 final DefaultValueFactory<?> defaultValueFactory = wrapper.requireDefaultValueFactory();
                 final Field field = wrapper.field;
                 final Object fieldValue = field.get(o);
                 if (fieldValue == null) {
-                    final Class<?> fieldType = field.getType();
                     final Object defaultValue = Validate.notNull(
                             defaultValueFactory.create(), "Null can not be the default value"
                     );
                     field.set(o, defaultValue);
                 }
-            } catch ( final IllegalAccessException ex ) {
+            } catch (final IllegalAccessException ex) {
                 throw new RuntimeException(ex);
             }
         }

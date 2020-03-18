@@ -67,8 +67,7 @@ public final class PhoneNumberTypeAdapterFactory implements TypeAdapterFactory {
             }
             try {
                 return parser.parse(text);
-            }
-            catch (PhoneNumber.ParseException ex) {
+            } catch (PhoneNumber.ParseException ex) {
                 throw new JsonParseException(ex);
             }
         }
