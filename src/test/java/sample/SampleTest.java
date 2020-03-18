@@ -4,22 +4,45 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import javax.annotation.Nonnull;
 
+@RunWith(Parameterized.class)
 public class SampleTest {
+
+    @Parameterized.Parameters(name = "withFactory({0})")
+    public static Object[] data() {
+        return new Object[] {
+                true, // test with PhoneNumberTypeAdapterFactory
+                false // test with PhoneNumberTypeAdapter
+        };
+    }
+
+    private final boolean withFactory;
+
+    public SampleTest(boolean withFactory) {
+        this.withFactory = withFactory;
+    }
 
     @Nonnull
     private GsonBuilder gsonBuilder() {
-        PhoneNumberParser parser = DefaultPhoneNumberParser.INSTANCE;
-        DefaultValueFactoryContainer defaultValueFactoryContainer = DefaultValueFactoryContainer.builder()
-                .register(PhoneNumber.class, PhoneNumber::absent)
-                .build();
+        PhoneNumberParser phoneNumberParser = DefaultPhoneNumberParser.INSTANCE;
         GsonBuilder builder = new GsonBuilder();
-        // NOTE: OptionalTypeTypeAdapterFactory must be registered before PhoneNumberTypeAdapterFactory.
-        builder.registerTypeAdapterFactory(new OptionalTypeTypeAdapterFactory(defaultValueFactoryContainer));
-        builder.registerTypeAdapterFactory(new PhoneNumberTypeAdapterFactory(parser));
+        builder.registerTypeAdapterFactory(new OptionalTypeTypeAdapterFactory(DefaultValueFactoryContainer.builder()
+                .register(PhoneNumber.class, PhoneNumber::absent)
+                .build()));
+        if (withFactory) {
+            // NOTE:
+            // OptionalTypeTypeAdapterFactory must be registered before PhoneNumberTypeAdapterFactory.
+            // Prefer to use PhoneNumberTypeAdapter.
+            builder.registerTypeAdapterFactory(new PhoneNumberTypeAdapterFactory(phoneNumberParser));
+        }
         builder.registerTypeAdapterFactory(new ValidatingTypeAdapterFactory());
+        if (!withFactory) {
+            builder.registerTypeAdapter(PhoneNumber.class, new PhoneNumberTypeAdapter(phoneNumberParser));
+        }
         return builder;
     }
 
