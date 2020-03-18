@@ -13,6 +13,7 @@ public class SampleTest {
     private GsonBuilder gsonBuilder() {
         PhoneNumberParser parser = DefaultPhoneNumberParser.INSTANCE;
         GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapterFactory(OptionalTypeTypeAdapterFactory.get()); // must be before optional-type adapters
         builder.registerTypeAdapterFactory(new PhoneNumberTypeAdapterFactory(parser));
         builder.registerTypeAdapterFactory(new ValidatingTypeAdapterFactory());
         return builder;

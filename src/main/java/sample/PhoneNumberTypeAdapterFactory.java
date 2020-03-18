@@ -57,7 +57,6 @@ public final class PhoneNumberTypeAdapterFactory implements TypeAdapterFactory {
         @Nonnull
         @Override
         public PhoneNumber read(JsonReader in) throws IOException {
-            // FIXME: What about JsonToken.UNDEFINED ?
             if (in.peek() == JsonToken.NULL) {
                 in.nextNull();
                 return PhoneNumber.absent();
