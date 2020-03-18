@@ -12,8 +12,12 @@ public class SampleTest {
     @Nonnull
     private GsonBuilder gsonBuilder() {
         PhoneNumberParser parser = DefaultPhoneNumberParser.INSTANCE;
+        DefaultValueFactoryContainer defaultValueFactoryContainer = DefaultValueFactoryContainer.builder()
+                .register(PhoneNumber.class, PhoneNumber::absent)
+                .build();
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapterFactory(OptionalTypeTypeAdapterFactory.get()); // must be before optional-type adapters
+        // NOTE: OptionalTypeTypeAdapterFactory must be registered before PhoneNumberTypeAdapterFactory.
+        builder.registerTypeAdapterFactory(new OptionalTypeTypeAdapterFactory(defaultValueFactoryContainer));
         builder.registerTypeAdapterFactory(new PhoneNumberTypeAdapterFactory(parser));
         builder.registerTypeAdapterFactory(new ValidatingTypeAdapterFactory());
         return builder;
